@@ -9,6 +9,18 @@ class SnakesAndLadders {
         this.autoMode = false;
         this.autoInterval = null;
         
+        // Statistiques de la partie
+        this.stats = {
+            gameStartTime: null,
+            totalRolls: 0,
+            totalTurns: 0,
+            diceRolls: [],
+            snakeHits: 0,
+            ladderHits: 0,
+            bounces: 0,
+            playerStats: {}
+        };
+        
         // Icônes et couleurs pour les joueurs
         this.playerData = [
             { icon: '🔴', color: '#e74c3c', name: 'Rouge' },
@@ -121,23 +133,30 @@ class SnakesAndLadders {
         const rollDiceBtn = document.getElementById('rollDice');
         const newGameBtn = document.getElementById('newGame');
         const rulesBtn = document.getElementById('rules');
+        const statsBtn = document.getElementById('stats');
         const autoModeBtn = document.getElementById('autoMode');
         const rulesModal = document.getElementById('rulesModal');
         const winModal = document.getElementById('winModal');
+        const statsModal = document.getElementById('statsModal');
         const autoModeModal = document.getElementById('autoModeModal');
         const closeBtn = document.querySelector('.close');
         const playAgainBtn = document.getElementById('playAgain');
+        const closeStatsBtn = document.getElementById('closeStats');
+        const resetStatsBtn = document.getElementById('resetStats');
         const confirmAutoModeBtn = document.getElementById('confirmAutoMode');
         const cancelAutoModeBtn = document.getElementById('cancelAutoMode');
         
         rollDiceBtn.addEventListener('click', () => this.rollDice());
         newGameBtn.addEventListener('click', () => this.newGame());
         rulesBtn.addEventListener('click', () => this.showRules());
+        statsBtn.addEventListener('click', () => this.showStats());
         autoModeBtn.addEventListener('click', () => this.showAutoModeModal());
         confirmAutoModeBtn.addEventListener('click', () => this.startAutoMode());
         cancelAutoModeBtn.addEventListener('click', () => this.hideAutoModeModal());
         closeBtn.addEventListener('click', () => this.hideRules());
         playAgainBtn.addEventListener('click', () => this.newGame());
+        closeStatsBtn.addEventListener('click', () => this.hideStats());
+        resetStatsBtn.addEventListener('click', () => this.resetStats());
         
         // Fermer les modales en cliquant à l'extérieur
         window.addEventListener('click', (e) => {
@@ -146,6 +165,9 @@ class SnakesAndLadders {
             }
             if (e.target === winModal) {
                 this.hideWinModal();
+            }
+            if (e.target === statsModal) {
+                this.hideStats();
             }
             if (e.target === autoModeModal) {
                 this.hideAutoModeModal();
@@ -205,13 +227,19 @@ class SnakesAndLadders {
     
     movePlayer(steps) {
         const player = this.players[this.currentPlayer];
+        const oldPosition = player.position;
         let newPosition = player.position + steps;
+        let eventType = null;
         
         // Règle du rebond : si on dépasse 100, on recule d'autant
         if (newPosition > 100) {
             newPosition = 100 - (newPosition - 100);
             this.showMessage(`Dépassement ! Rebond vers la case ${newPosition}`, 'warning');
+            eventType = 'bounce';
         }
+        
+        // Mettre à jour les statistiques pour le mouvement de base
+        this.updateStats(player.id, steps, oldPosition, newPosition, eventType);
         
         this.animatePlayerMovement(player, newPosition).then(() => {
             player.position = newPosition;
@@ -227,6 +255,8 @@ class SnakesAndLadders {
             if (this.snakes[newPosition]) {
                 setTimeout(() => {
                     const snakeEnd = this.snakes[newPosition];
+                    // Mettre à jour les stats pour le serpent
+                    this.updateStats(player.id, 0, newPosition, snakeEnd, 'snake');
                     // Animation directe pour le serpent
                     this.animateDirectMovement(player, snakeEnd).then(() => {
                         player.position = snakeEnd;
@@ -239,6 +269,8 @@ class SnakesAndLadders {
             } else if (this.ladders[newPosition]) {
                 setTimeout(() => {
                     const ladderEnd = this.ladders[newPosition];
+                    // Mettre à jour les stats pour l'échelle
+                    this.updateStats(player.id, 0, newPosition, ladderEnd, 'ladder');
                     // Animation directe pour l'échelle
                     this.animateDirectMovement(player, ladderEnd).then(() => {
                         player.position = ladderEnd;
@@ -338,6 +370,8 @@ class SnakesAndLadders {
         document.getElementById('rollDice').disabled = false;
         
         if (!this.gameWon) {
+            // Incrémenter le nombre de tours
+            this.stats.totalTurns++;
             // Changer de joueur
             this.currentPlayer = (this.currentPlayer + 1) % this.players.length;
             this.updateUI();
@@ -434,6 +468,18 @@ class SnakesAndLadders {
     initializePlayers(count) {
         this.players = [];
         
+        // Réinitialiser les statistiques
+        this.stats = {
+            gameStartTime: Date.now(),
+            totalRolls: 0,
+            totalTurns: 0,
+            diceRolls: [],
+            snakeHits: 0,
+            ladderHits: 0,
+            bounces: 0,
+            playerStats: {}
+        };
+        
         // Créer les joueurs
         for (let i = 0; i < count; i++) {
             this.players.push({
@@ -441,6 +487,8 @@ class SnakesAndLadders {
                 position: 0,
                 data: this.playerData[i]
             });
+            // Initialiser les stats pour chaque joueur
+            this.initializePlayerStats(i + 1);
         }
         
         // 🧪 BOUCHON DE TEST - Placer le joueur 1 à la case 99 pour tester la victoire
@@ -588,6 +636,127 @@ class SnakesAndLadders {
             // Lancer automatiquement pour le joueur actuel
             this.rollDice();
         }, 1500); // Réduit à 1.5 secondes pour une action plus fluide
+    }
+
+    // Méthodes pour les statistiques
+    initializePlayerStats(playerId) {
+        if (!this.stats.playerStats[playerId]) {
+            this.stats.playerStats[playerId] = {
+                position: 1,
+                rolls: 0,
+                snakeHits: 0,
+                ladderHits: 0,
+                bounces: 0,
+                maxPosition: 1
+            };
+        }
+    }
+    
+    updateStats(playerId, diceValue, oldPosition, newPosition, eventType = null) {
+        this.initializePlayerStats(playerId);
+        
+        const playerStats = this.stats.playerStats[playerId];
+        playerStats.rolls++;
+        playerStats.position = newPosition;
+        playerStats.maxPosition = Math.max(playerStats.maxPosition, newPosition);
+        
+        this.stats.totalRolls++;
+        this.stats.diceRolls.push(diceValue);
+        
+        if (eventType === 'snake') {
+            this.stats.snakeHits++;
+            playerStats.snakeHits++;
+        } else if (eventType === 'ladder') {
+            this.stats.ladderHits++;
+            playerStats.ladderHits++;
+        } else if (eventType === 'bounce') {
+            this.stats.bounces++;
+            playerStats.bounces++;
+        }
+    }
+    
+    showStats() {
+        this.updateStatsDisplay();
+        document.getElementById('statsModal').style.display = 'block';
+    }
+    
+    hideStats() {
+        document.getElementById('statsModal').style.display = 'none';
+    }
+    
+    resetStats() {
+        this.stats = {
+            gameStartTime: Date.now(),
+            totalRolls: 0,
+            totalTurns: 0,
+            diceRolls: [],
+            snakeHits: 0,
+            ladderHits: 0,
+            bounces: 0,
+            playerStats: {}
+        };
+        this.updateStatsDisplay();
+    }
+    
+    updateStatsDisplay() {
+        const now = Date.now();
+        const duration = this.stats.gameStartTime ? now - this.stats.gameStartTime : 0;
+        const minutes = Math.floor(duration / 60000);
+        const seconds = Math.floor((duration % 60000) / 1000);
+        
+        const diceAverage = this.stats.diceRolls.length > 0 
+            ? (this.stats.diceRolls.reduce((a, b) => a + b, 0) / this.stats.diceRolls.length).toFixed(2)
+            : 0;
+        
+        const highestRoll = this.stats.diceRolls.length > 0 
+            ? Math.max(...this.stats.diceRolls)
+            : 0;
+        
+        // Mise à jour des statistiques générales
+        document.getElementById('statPlayerCount').textContent = this.players.length;
+        document.getElementById('statTotalTurns').textContent = this.stats.totalTurns;
+        document.getElementById('statGameDuration').textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        document.getElementById('statTotalRolls').textContent = this.stats.totalRolls;
+        document.getElementById('statDiceAverage').textContent = diceAverage;
+        document.getElementById('statHighestRoll').textContent = highestRoll;
+        document.getElementById('statSnakeHits').textContent = this.stats.snakeHits;
+        document.getElementById('statLadderHits').textContent = this.stats.ladderHits;
+        document.getElementById('statBounces').textContent = this.stats.bounces;
+        
+        // Mise à jour du classement des joueurs
+        this.updatePlayerRanking();
+    }
+    
+    updatePlayerRanking() {
+        const rankingContainer = document.getElementById('playerRanking');
+        rankingContainer.innerHTML = '';
+        
+        // Trier les joueurs par position (du plus éloigné au plus proche de 100)
+        const sortedPlayers = [...this.players].sort((a, b) => b.position - a.position);
+        
+        sortedPlayers.forEach((player, index) => {
+            const playerStats = this.stats.playerStats[player.id] || {};
+            const playerData = this.playerData[player.id - 1];
+            const isWinner = player.position === 100;
+            
+            const rankItem = document.createElement('div');
+            rankItem.className = `player-rank-item ${isWinner ? 'winner' : ''}`;
+            
+            rankItem.innerHTML = `
+                <div class="player-rank-info">
+                    <span class="player-rank-position">#${index + 1}</span>
+                    <span style="color: ${playerData.color}; font-size: 1.2em;">${playerData.icon}</span>
+                    <span class="player-rank-name">Joueur ${player.id} (${playerData.name})</span>
+                </div>
+                <div class="player-rank-stats">
+                    <div>Position: <strong>${player.position}</strong></div>
+                    <div>Lancers: <strong>${playerStats.rolls || 0}</strong></div>
+                    <div>🐍 ${playerStats.snakeHits || 0} | 🪜 ${playerStats.ladderHits || 0}</div>
+                </div>
+            `;
+            
+            rankingContainer.appendChild(rankItem);
+        });
     }
 }
 

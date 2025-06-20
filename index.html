@@ -33,6 +33,7 @@
         <div class="game-controls">
             <button id="newGame" class="btn-secondary">Nouvelle partie</button>
             <button id="rules" class="btn-secondary">Règles</button>
+            <button id="stats" class="btn-secondary">📊 Statistiques</button>
             <button id="autoMode" class="btn-warning">Mode Automatique</button>
         </div>
 
@@ -97,6 +98,80 @@
                 <p class="algorithm-note">
                     Comment ça c'est pas un jeu mais un algorithme ? Oui...
                 </p>
+            </div>
+        </div>
+
+        <!-- Modal pour les statistiques -->
+        <div class="modal" id="statsModal">
+            <div class="modal-content">
+                <h2>📊 Statistiques de la partie</h2>
+                <div id="statsContent">
+                    <div class="stats-section">
+                        <h3>🎮 Informations générales</h3>
+                        <div class="stats-grid">
+                            <div class="stat-item">
+                                <span class="stat-label">Nombre de joueurs :</span>
+                                <span class="stat-value" id="statPlayerCount">-</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Tours joués :</span>
+                                <span class="stat-value" id="statTotalTurns">-</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Durée de partie :</span>
+                                <span class="stat-value" id="statGameDuration">-</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="stats-section">
+                        <h3>🎲 Statistiques des dés</h3>
+                        <div class="stats-grid">
+                            <div class="stat-item">
+                                <span class="stat-label">Total de lancers :</span>
+                                <span class="stat-value" id="statTotalRolls">-</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Moyenne des dés :</span>
+                                <span class="stat-value" id="statDiceAverage">-</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Plus haut score :</span>
+                                <span class="stat-value" id="statHighestRoll">-</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="stats-section">
+                        <h3>🐍🪜 Évènements spéciaux</h3>
+                        <div class="stats-grid">
+                            <div class="stat-item">
+                                <span class="stat-label">Serpents rencontrés :</span>
+                                <span class="stat-value" id="statSnakeHits">-</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Échelles utilisées :</span>
+                                <span class="stat-value" id="statLadderHits">-</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Rebonds (>100) :</span>
+                                <span class="stat-value" id="statBounces">-</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="stats-section">
+                        <h3>👥 Classement des joueurs</h3>
+                        <div id="playerRanking">
+                            <!-- Classement dynamique -->
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="display: flex; gap: 10px; justify-content: center; margin-top: 20px;">
+                    <button id="closeStats" class="btn-primary">Fermer</button>
+                    <button id="resetStats" class="btn-secondary">Réinitialiser</button>
+                </div>
             </div>
         </div>
 
