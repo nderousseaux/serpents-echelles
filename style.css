@@ -504,45 +504,140 @@ main {
     cursor: not-allowed;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-    body {
-        padding: 10px;
+/* Responsive Design */
+
+/* Large screens (desktop) - 1200px and up */
+@media (min-width: 1200px) {
+    .container {
+        max-width: 1400px;
+    }
+    
+    .game-board {
+        max-width: 700px;
     }
     
     header h1 {
-        font-size: 2em;
+        font-size: 3em;
+    }
+    
+    .subtitle {
+        font-size: 1.3em;
+    }
+}
+
+/* Medium screens (tablets) - 768px to 1199px */
+@media (max-width: 1199px) and (min-width: 769px) {
+    .container {
+        max-width: 95%;
+    }
+    
+    .game-board {
+        max-width: 80vw;
+    }
+    
+    header h1 {
+        font-size: 2.2em;
+    }
+    
+    .subtitle {
+        font-size: 1.1em;
+    }
+    
+    main {
+        padding: 20px;
+    }
+}
+
+/* Small tablets and large phones - 481px to 768px */
+@media (max-width: 768px) {
+    body {
+        padding: 5px;
+        font-size: 14px;
+    }
+    
+    .container {
+        border-radius: 0;
+        margin: 0;
+        min-height: 100vh;
+    }
+    
+    header {
+        padding: 15px 10px;
+    }
+    
+    header h1 {
+        font-size: 1.8em;
+        margin-bottom: 5px;
+    }
+    
+    .subtitle {
+        font-size: 0.9em;
+        margin-bottom: 10px;
     }
     
     .game-info {
         flex-direction: column;
-        gap: 15px;
+        gap: 10px;
+        padding: 0 10px;
     }
     
     .player-info {
         justify-content: center;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+    
+    .player {
+        min-width: 80px;
+        padding: 8px;
+        font-size: 0.85em;
     }
     
     .dice-section {
         justify-content: center;
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .dice-container {
+        justify-content: center;
+    }
+    
+    .dice {
+        width: 60px;
+        height: 60px;
+        font-size: 1.5em;
+    }
+    
+    .controls {
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+    
+    .btn-primary, .btn-secondary, .btn-warning, .btn-danger {
+        padding: 10px 15px;
+        font-size: 0.9em;
+        min-width: 100px;
+    }
+    
+    main {
+        padding: 15px 10px;
     }
     
     .game-board {
-        max-width: 90vw;
+        max-width: 95vw;
+        gap: 1px;
+        padding: 8px;
     }
     
     .cell {
-        font-size: 0.7em;
+        font-size: 0.65em;
+        border-width: 1px;
     }
     
-    .cell-content {
-        font-size: 1.2em;
-    }
-}
-
-@media (max-width: 480px) {
-    .cell {
-        font-size: 0.6em;
+    .cell-number {
+        font-size: 0.8em;
     }
     
     .cell-content {
@@ -550,7 +645,269 @@ main {
     }
     
     .player-token {
-        width: 10px;
-        height: 10px;
+        width: 12px;
+        height: 12px;
+        font-size: 8px;
     }
+    
+    .message {
+        font-size: 0.9em;
+        padding: 8px;
+    }
+    
+    /* Modal adjustments for tablets */
+    .modal-content {
+        width: 90%;
+        max-width: 400px;
+        padding: 20px;
+        margin: 10% auto;
+    }
+    
+    .modal-content h2 {
+        font-size: 1.5em;
+    }
+    
+    .player-count-options {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+    }
+    
+    .player-count-btn {
+        padding: 15px;
+        font-size: 1em;
+    }
+}
+
+/* Mobile phones - 320px to 480px */
+@media (max-width: 480px) {
+    body {
+        padding: 0;
+        font-size: 12px;
+    }
+    
+    header {
+        padding: 10px;
+    }
+    
+    header h1 {
+        font-size: 1.5em;
+        line-height: 1.2;
+    }
+    
+    .subtitle {
+        font-size: 0.8em;
+        display: none; /* Hide subtitle on very small screens */
+    }
+    
+    .game-info {
+        padding: 0 5px;
+        gap: 8px;
+    }
+    
+    .player {
+        min-width: 70px;
+        padding: 6px;
+        font-size: 0.75em;
+    }
+    
+    .dice {
+        width: 50px;
+        height: 50px;
+        font-size: 1.2em;
+    }
+    
+    .btn-primary, .btn-secondary, .btn-warning, .btn-danger {
+        padding: 8px 12px;
+        font-size: 0.8em;
+        min-width: 80px;
+    }
+    
+    main {
+        padding: 10px 5px;
+    }
+    
+    .game-board {
+        max-width: 98vw;
+        gap: 0.5px;
+        padding: 5px;
+    }
+    
+    .cell {
+        font-size: 0.5em;
+        border-radius: 2px;
+    }
+    
+    .cell-number {
+        font-size: 0.7em;
+        line-height: 1;
+    }
+    
+    .cell-content {
+        font-size: 0.9em;
+        line-height: 1;
+    }
+    
+    .player-token {
+        width: 8px;
+        height: 8px;
+        font-size: 6px;
+        border-radius: 50%;
+    }
+    
+    .message {
+        font-size: 0.8em;
+        padding: 6px;
+        margin: 5px 0;
+    }
+    
+    /* Mobile modal adjustments */
+    .modal-content {
+        width: 95%;
+        max-width: none;
+        padding: 15px;
+        margin: 5% auto;
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+    
+    .modal-content h2 {
+        font-size: 1.3em;
+        margin-bottom: 10px;
+    }
+    
+    .modal-content p {
+        font-size: 0.9em;
+        line-height: 1.4;
+    }
+    
+    .player-count-options {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+    }
+    
+    .player-count-btn {
+        padding: 12px;
+        font-size: 0.9em;
+    }
+    
+    .algorithm-note-blue {
+        padding: 10px;
+        margin-top: 15px;
+        font-size: 0.8em;
+        line-height: 1.3;
+    }
+    
+    /* Button container for modal */
+    .modal-content div[style*="display: flex"] {
+        flex-direction: column !important;
+        gap: 10px !important;
+    }
+    
+    .modal-content div[style*="display: flex"] button {
+        width: 100% !important;
+        min-width: auto !important;
+    }
+}
+
+/* Extra small screens - below 320px */
+@media (max-width: 319px) {
+    header h1 {
+        font-size: 1.2em;
+    }
+    
+    .cell {
+        font-size: 0.4em;
+    }
+    
+    .cell-number {
+        font-size: 0.6em;
+    }
+    
+    .player-token {
+        width: 6px;
+        height: 6px;
+        font-size: 5px;
+    }
+    
+    .btn-primary, .btn-secondary, .btn-warning, .btn-danger {
+        font-size: 0.7em;
+        padding: 6px 10px;
+    }
+}
+
+/* Landscape orientation adjustments for mobile */
+@media (max-height: 500px) and (orientation: landscape) {
+    .modal-content {
+        margin: 2% auto;
+        max-height: 95vh;
+    }
+    
+    header {
+        padding: 8px;
+    }
+    
+    header h1 {
+        font-size: 1.4em;
+    }
+    
+    .subtitle {
+        display: none;
+    }
+    
+    main {
+        padding: 8px;
+    }
+    
+    .game-info {
+        flex-direction: row;
+        justify-content: space-between;
+        flex-wrap: wrap;
+    }
+}
+
+/* Touch and mobile interaction improvements */
+@media (hover: none) and (pointer: coarse) {
+    /* Remove hover effects on touch devices */
+    .cell:hover {
+        background: white;
+        transform: none;
+    }
+    
+    .btn-primary:hover,
+    .btn-secondary:hover,
+    .btn-warning:hover,
+    .btn-danger:hover {
+        transform: none;
+    }
+    
+    /* Increase touch targets */
+    .btn-primary, .btn-secondary, .btn-warning, .btn-danger {
+        min-height: 44px;
+        touch-action: manipulation;
+    }
+    
+    .player-count-btn {
+        min-height: 44px;
+        touch-action: manipulation;
+    }
+}
+
+/* Prevent zoom on input focus for iOS */
+input, select, textarea, button {
+    font-size: 16px;
+}
+
+/* Smooth scrolling */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Better focus indicators for accessibility */
+button:focus-visible,
+.btn-primary:focus-visible,
+.btn-secondary:focus-visible,
+.btn-warning:focus-visible,
+.btn-danger:focus-visible {
+    outline: 2px solid var(--secondary-color);
+    outline-offset: 2px;
 }
