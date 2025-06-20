@@ -142,22 +142,35 @@ class SnakesAndLadders {
         const closeBtn = document.querySelector('.close');
         const playAgainBtn = document.getElementById('playAgain');
         const closeStatsBtn = document.getElementById('closeStats');
-        const resetStatsBtn = document.getElementById('resetStats');
         const confirmAutoModeBtn = document.getElementById('confirmAutoMode');
         const cancelAutoModeBtn = document.getElementById('cancelAutoMode');
+        
+        // Debug: vérifier que les éléments existent
         
         rollDiceBtn.addEventListener('click', () => this.rollDice());
         newGameBtn.addEventListener('click', () => this.newGame());
         rulesBtn.addEventListener('click', () => this.showRules());
-        statsBtn.addEventListener('click', () => this.showStats());
+        
+        if (statsBtn) {
+            statsBtn.addEventListener('click', () => {
+                this.showStats();
+            });
+        } else {
+            console.error('Stats button not found!');
+        }
+        
         autoModeBtn.addEventListener('click', () => this.showAutoModeModal());
         confirmAutoModeBtn.addEventListener('click', () => this.startAutoMode());
         cancelAutoModeBtn.addEventListener('click', () => this.hideAutoModeModal());
         closeBtn.addEventListener('click', () => this.hideRules());
         playAgainBtn.addEventListener('click', () => this.newGame());
         closeStatsBtn.addEventListener('click', () => this.hideStats());
-        resetStatsBtn.addEventListener('click', () => this.resetStats());
         
+        // Event listeners pour les onglets de statistiques
+        document.querySelectorAll('.stats-tab').forEach(tab => {
+            tab.addEventListener('click', (e) => this.switchStatsTab(e.target.dataset.tab));
+        });
+
         // Fermer les modales en cliquant à l'extérieur
         window.addEventListener('click', (e) => {
             if (e.target === rulesModal) {
@@ -419,6 +432,9 @@ class SnakesAndLadders {
         const playerData = this.playerData[this.currentPlayer];
         message.innerHTML = `<strong style="color: ${playerData.color};">${playerData.icon} Joueur ${winnerPlayer.id} (${playerData.name})</strong> a gagné !`;
         modal.style.display = 'block';
+        
+        // Sauvegarder les statistiques de la partie
+        this.saveCurrentGameStats();
     }
     
     hideWinModal() {
@@ -491,12 +507,7 @@ class SnakesAndLadders {
             this.initializePlayerStats(i + 1);
         }
         
-        // 🧪 BOUCHON DE TEST - Placer le joueur 1 à la case 99 pour tester la victoire
-        // if (this.players.length > 0) {
-        //     this.players[0].position = 99;
-        // }
-        // Commentez la ligne ci-dessus pour revenir au comportement normal
-        
+   
         // Créer l'interface des joueurs
         this.createPlayerInterface();
         this.updatePlayerPositions();
@@ -677,25 +688,23 @@ class SnakesAndLadders {
     
     showStats() {
         this.updateStatsDisplay();
-        document.getElementById('statsModal').style.display = 'block';
+        const statsModal = document.getElementById('statsModal');
+        if (statsModal) {
+            statsModal.style.display = 'block';
+            
+            // Vérifier si l'onglet global est actif et recharger les données
+            const activeTab = document.querySelector('.stats-tab.active');
+            if (activeTab && activeTab.dataset.tab === 'global') {
+                this.showGlobalStatsLoading(true);
+                this.loadGlobalStats();
+            }
+        } else {
+            console.error('Stats modal not found in showStats!');
+        }
     }
     
     hideStats() {
         document.getElementById('statsModal').style.display = 'none';
-    }
-    
-    resetStats() {
-        this.stats = {
-            gameStartTime: Date.now(),
-            totalRolls: 0,
-            totalTurns: 0,
-            diceRolls: [],
-            snakeHits: 0,
-            ladderHits: 0,
-            bounces: 0,
-            playerStats: {}
-        };
-        this.updateStatsDisplay();
     }
     
     updateStatsDisplay() {
@@ -757,6 +766,124 @@ class SnakesAndLadders {
             
             rankingContainer.appendChild(rankItem);
         });
+    }
+    
+    // Méthodes pour les onglets de statistiques
+    switchStatsTab(tabName) {
+        // Masquer tous les contenus d'onglets
+        document.querySelectorAll('.stats-tab-content').forEach(content => {
+            content.classList.remove('active');
+        });
+        
+        // Désactiver tous les onglets
+        document.querySelectorAll('.stats-tab').forEach(tab => {
+            tab.classList.remove('active');
+        });
+        
+        // Activer l'onglet et le contenu sélectionnés
+        document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+        document.getElementById(`${tabName}StatsContent`).classList.add('active');
+        
+        // Toujours recharger les données globales quand on clique sur l'onglet global
+        if (tabName === 'global') {
+            this.showGlobalStatsLoading(true);
+            this.loadGlobalStats();
+        }
+    }
+    
+    // Charger et afficher les statistiques globales
+    async loadGlobalStats() {
+        // Afficher l'indicateur de chargement
+        this.showGlobalStatsLoading(true);
+        
+        try {
+            const stats = await apiClient.getGlobalStats();
+            this.displayGlobalStats(stats);
+        } catch (error) {
+            console.error('Erreur lors du chargement des stats globales:', error);
+            this.showMessage('Erreur lors du chargement des statistiques globales', 'warning');
+            
+            // Afficher des valeurs par défaut en cas d'erreur
+            this.displayGlobalStats({
+                totalGames: 0,
+                shortestGameTurns: null,
+                longestGameTurns: null,
+                averageGameDuration: 0,
+                averageTurnsPerGame: 0,
+                totalRolls: 0,
+                averageDice: 0,
+                maxSnakesPerGame: 0,
+                maxLaddersPerGame: 0,
+                maxBouncesPerGame: 0
+            });
+        } finally {
+            // Masquer l'indicateur de chargement
+            this.showGlobalStatsLoading(false);
+        }
+    }
+    
+    // Afficher les statistiques globales
+    displayGlobalStats(stats) {
+        document.getElementById('globalTotalGames').textContent = stats.totalGames;
+        document.getElementById('globalShortestGame').textContent = 
+            stats.shortestGameTurns ? `${stats.shortestGameTurns} tours` : '-';
+        document.getElementById('globalLongestGame').textContent = 
+            stats.longestGameTurns ? `${stats.longestGameTurns} tours` : '-';
+        document.getElementById('globalAverageGame').textContent = 
+            this.formatDuration(stats.averageGameDuration);
+        document.getElementById('globalAverageTurns').textContent = stats.averageTurnsPerGame;
+        document.getElementById('globalTotalRolls').textContent = stats.totalRolls;
+        document.getElementById('globalDiceAverage').textContent = stats.averageDice;
+        document.getElementById('globalMaxSnakes').textContent = stats.maxSnakesPerGame;
+        document.getElementById('globalMaxLadders').textContent = stats.maxLaddersPerGame;
+        document.getElementById('globalMaxBounces').textContent = stats.maxBouncesPerGame;
+    }
+    
+    // Formater la durée en mm:ss
+    formatDuration(milliseconds) {
+        const minutes = Math.floor(milliseconds / 60000);
+        const seconds = Math.floor((milliseconds % 60000) / 1000);
+        return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+    }
+    
+    // Sauvegarder les statistiques de la partie en cours
+    async saveCurrentGameStats() {
+        if (!this.gameWon || !this.stats.gameStartTime) {
+            return;
+        }
+        
+        const gameDuration = Date.now() - this.stats.gameStartTime;
+        const gameStats = {
+            duration: gameDuration,
+            turns: this.stats.totalTurns,
+            rolls: this.stats.totalRolls,
+            snakes: this.stats.snakeHits,
+            ladders: this.stats.ladderHits,
+            bounces: this.stats.bounces,
+            diceRolls: this.stats.diceRolls
+        };
+        
+        try {
+            await apiClient.saveGameStats(gameStats);
+            console.log('Statistiques de la partie sauvegardées');
+        } catch (error) {
+            console.error('Erreur lors de la sauvegarde des stats:', error);
+        }
+    }
+
+    // Contrôler l'affichage de l'indicateur de chargement pour les stats globales
+    showGlobalStatsLoading(show) {
+        const loadingElement = document.getElementById('globalStatsLoading');
+        const dataElement = document.getElementById('globalStatsData');
+        
+        if (show) {
+            loadingElement.style.display = 'flex';
+            dataElement.style.display = 'none';
+        } else {
+            loadingElement.style.display = 'none';
+            dataElement.style.display = 'block';
+            dataElement.classList.add('stats-fade-in');
+        }
     }
 }
 

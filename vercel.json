@@ -1,8 +1,10 @@
 {
-  "name": "serpents-et-echelles",
-  "buildCommand": "",
-  "outputDirectory": ".",
-  "installCommand": "",
+  "version": 2,
+  "functions": {
+    "api/*.js": {
+      "runtime": "@vercel/node@2.15.10"
+    }
+  },
   "headers": [
     {
       "source": "/(.*)",
@@ -10,6 +12,23 @@
         {
           "key": "Cache-Control",
           "value": "public, max-age=86400"
+        }
+      ]
+    },
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        },
+        {
+          "key": "Access-Control-Allow-Methods",
+          "value": "GET, POST, PUT, DELETE, OPTIONS"
+        },
+        {
+          "key": "Access-Control-Allow-Headers",
+          "value": "Content-Type, Authorization"
         }
       ]
     }

@@ -104,8 +104,16 @@
         <!-- Modal pour les statistiques -->
         <div class="modal" id="statsModal">
             <div class="modal-content">
-                <h2>📊 Statistiques de la partie</h2>
-                <div id="statsContent">
+                <h2>📊 Statistiques</h2>
+                
+                <!-- Onglets pour les statistiques -->
+                <div class="stats-tabs">
+                    <button class="stats-tab active" data-tab="current">Partie Actuelle</button>
+                    <button class="stats-tab" data-tab="global">Statistiques Globales</button>
+                </div>
+                
+                <!-- Contenu de la partie actuelle -->
+                <div id="currentStatsContent" class="stats-tab-content active">
                     <div class="stats-section">
                         <h3>🎮 Informations générales</h3>
                         <div class="stats-grid">
@@ -168,9 +176,72 @@
                     </div>
                 </div>
                 
+                <!-- Contenu des statistiques globales -->
+                <div id="globalStatsContent" class="stats-tab-content">
+                    <!-- Indicateur de chargement -->
+                    <div id="globalStatsLoading" class="stats-loading">
+                        <div class="loading-spinner">⏳</div>
+                        <p>Chargement des statistiques globales...</p>
+                    </div>
+                    
+                    <!-- Contenu des stats (masqué pendant le chargement) -->
+                    <div id="globalStatsData" style="display: none;">
+                        <div class="stats-section">
+                            <h3>🏆 Statistiques Globales</h3>
+                            <div class="stats-grid">
+                                <div class="stat-item">
+                                    <span class="stat-label">Nombre total de parties :</span>
+                                    <span class="stat-value" id="globalTotalGames">-</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">Plus courte partie (tours) :</span>
+                                    <span class="stat-value" id="globalShortestGame">-</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">Plus longue partie (tours) :</span>
+                                    <span class="stat-value" id="globalLongestGame">-</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">Durée moyenne par partie :</span>
+                                    <span class="stat-value" id="globalAverageGame">-</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">Tours moyen par partie :</span>
+                                    <span class="stat-value" id="globalAverageTurns">-</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">Total de lancers de dés :</span>
+                                    <span class="stat-value" id="globalTotalRolls">-</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="stats-section">
+                            <h3>📈 Records</h3>
+                            <div class="stats-grid">
+                                <div class="stat-item">
+                                    <span class="stat-label">Plus de serpents en une partie :</span>
+                                    <span class="stat-value" id="globalMaxSnakes">-</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">Plus d'échelles en une partie :</span>
+                                    <span class="stat-value" id="globalMaxLadders">-</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">Plus de rebonds en une partie :</span>
+                                    <span class="stat-value" id="globalMaxBounces">-</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">Moyenne des dés (toutes parties) :</span>
+                                    <span class="stat-value" id="globalDiceAverage">-</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
                 <div style="display: flex; gap: 10px; justify-content: center; margin-top: 20px;">
                     <button id="closeStats" class="btn-primary">Fermer</button>
-                    <button id="resetStats" class="btn-secondary">Réinitialiser</button>
                 </div>
             </div>
         </div>
@@ -195,6 +266,7 @@
         </div>
     </div>
 
+    <script src="api-client.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

@@ -1,12 +1,14 @@
 {
   "name": "serpents-et-echelles",
   "version": "1.0.0",
-  "description": "Un jeu moderne et interactif de Serpents et Échelles",
+  "description": "Un jeu moderne et interactif de Serpents et Échelles avec backend",
   "main": "index.html",
+  "engines": {
+    "node": "18.x"
+  },
   "scripts": {
-    "start": "serve .",
-    "dev": "serve . --listen 3000",
-    "build": "echo 'Static site - no build needed'"
+    "build": "echo 'Static site with API - no build needed'",
+    "local": "vercel dev --listen 4000"
   },
   "keywords": [
     "game",
@@ -22,6 +24,9 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/votre-username/serpents-et-echelles.git"
+  },
+  "dependencies": {
+    "pg": "^8.11.0"
   },
   "devDependencies": {
     "serve": "^14.0.0"
