@@ -1,0 +1,29 @@
+{
+  "name": "serpents-et-echelles",
+  "version": "1.0.0",
+  "description": "Un jeu moderne et interactif de Serpents et Échelles",
+  "main": "index.html",
+  "scripts": {
+    "start": "serve .",
+    "dev": "serve . --listen 3000",
+    "build": "echo 'Static site - no build needed'"
+  },
+  "keywords": [
+    "game",
+    "snakes-and-ladders",
+    "javascript",
+    "html5",
+    "css3",
+    "interactive"
+  ],
+  "author": "Votre nom",
+  "license": "MIT",
+  "homepage": "https://github.com/votre-username/serpents-et-echelles#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/votre-username/serpents-et-echelles.git"
+  },
+  "devDependencies": {
+    "serve": "^14.0.0"
+  }
+}

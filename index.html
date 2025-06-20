@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Serpents et Échelles</title>
+    <link rel="icon" type="image/jpeg" href="back.jpg">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🐍 Serpents et Échelles 🪜</h1>
+            <h2 class="subtitle">Ou comment gagner la liberté de Melissa</h2>
+            <div class="game-info">
+                <div class="player-info" id="playerInfo">
+                    <!-- Les joueurs seront générés dynamiquement -->
+                </div>
+                <div class="dice-section">
+                    <div class="dice" id="dice">🎲</div>
+                    <button id="rollDice" class="roll-btn">Lancer le dé</button>
+                    <div class="dice-result" id="diceResult"></div>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="game-board" id="gameBoard">
+                <!-- Le plateau sera généré par JavaScript -->
+            </div>
+        </main>
+
+        <div class="game-controls">
+            <button id="newGame" class="btn-secondary">Nouvelle partie</button>
+            <button id="rules" class="btn-secondary">Règles</button>
+            <button id="autoMode" class="btn-warning">Mode Automatique</button>
+        </div>
+
+        <!-- Modal pour le mode automatique -->
+        <div class="modal" id="autoModeModal">
+            <div class="modal-content">
+                <h2>🤖 Mode Automatique</h2>
+                <p>Vous êtes-vous sûr de vouloir activer le mode automatique ?</p>
+                <div class="auto-mode-warning">
+                    <p><strong>⚠️ Attention :</strong></p>
+                    <ul>
+                        <li>Le jeu se jouera tout seul</li>
+                        <li>Les dés seront lancés automatiquement</li>
+                        <li>Vous ne pourrez plus contrôler le jeu</li>
+                        <li>La partie se terminera sans votre intervention</li>
+                    </ul>
+                </div>
+                <p class="algorithm-note-blue">
+                    Néanmoins, vous remarquerez que votre expérience de jeu n'en sera pas affectée du tout.
+                    <br>
+                    Devons-nous en conlure que ce n'est pas un jeu mais un algorithme ? 
+                    <br>
+                    (Oui, fin du débat)
+                </p>
+                <div class="modal-buttons">
+                    <button id="confirmAutoMode" class="btn-warning">Oui, activer</button>
+                    <button id="cancelAutoMode" class="btn-secondary">Annuler</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal pour choisir le nombre de joueurs -->
+        <div class="modal" id="playerSetupModal">
+            <div class="modal-content">
+                <h2>🎯 Configuration de la partie</h2>
+                <p>Choisissez le nombre de joueurs :</p>
+                <div class="player-count-selector">
+                    <button class="player-count-btn" data-count="1">1 Joueur</button>
+                    <button class="player-count-btn" data-count="2">2 Joueurs</button>
+                    <button class="player-count-btn" data-count="3">3 Joueurs</button>
+                    <button class="player-count-btn" data-count="4">4 Joueurs</button>
+                    <button class="player-count-btn" data-count="5">5 Joueurs</button>
+                    <button class="player-count-btn" data-count="6">6 Joueurs</button>
+                </div>
+                <button id="startGame" class="btn-primary" disabled>Commencer la partie</button>
+            </div>
+        </div>
+
+        <!-- Modal pour les règles -->
+        <div class="modal" id="rulesModal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2>Règles du jeu</h2>
+                <ul>
+                    <li>Lancez le dé à tour de rôle</li>
+                    <li>Avancez du nombre de cases indiqué par le dé</li>
+                    <li>Si vous tombez au pied d'une échelle, montez !</li>
+                    <li>Si vous tombez sur la tête d'un serpent, descendez !</li>
+                    <li>Le premier joueur à atteindre la case 100 gagne !</li>
+                </ul>
+                
+                <p class="algorithm-note">
+                    Comment ça c'est pas un jeu mais un algorithme ? Oui...
+                </p>
+            </div>
+        </div>
+
+        <!-- Modal pour la victoire -->
+        <div class="modal" id="winModal">
+            <div class="modal-content">
+                <h2>🎉 Félicitations ! 🎉</h2>
+                <p id="winMessage">Joueur a gagné !</p>
+                
+                <div class="algorithm-note-blue">
+                    Vous êtes Mélissa ? Si oui, vous pouvez d'ores et déjà écrire un post sur LinkedIn bien cringe, pour que tout vos collègues sachent que vous avez gagné votre indépendance.
+                </div>
+
+                <div style="display: flex; gap: 10px; justify-content: center; margin-top: 20px;">
+                    <button id="playAgain" class="btn-primary">Rejouer</button>
+                    <button id="linkedinBtn" class="btn-secondary" onclick="window.open('https://www.linkedin.com', '_blank')">
+                        📱 LinkedIn
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
